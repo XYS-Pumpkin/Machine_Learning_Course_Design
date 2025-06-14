@@ -1,90 +1,188 @@
-# 手写数字识别系统（CNN 与传统分类器对比）
+# 基于卷积神经网络的手写数字识别（CNN vs 传统模型）
 
-本项目基于经典的 MNIST 数据集，设计并实现了多个传统机器学习分类器（逻辑回归、决策树、KNN、随机森林、SVM、朴素贝叶斯）与一个卷积神经网络（CNN）模型，系统对比其在手写数字识别任务中的性能表现。
+## 📘 项目简介  
+本项目基于 PyTorch 实现手写数字识别系统，使用卷积神经网络（CNN）对 MNIST 数据集进行训练与测试，并与多种传统分类器（逻辑回归、决策树、线性SVM、K近邻、随机森林、朴素贝叶斯）进行性能对比，分析训练效率与分类精度。
 
-## 项目结构
+---
 
-.
-├── models/                  # 自定义模型文件，如 cnn.py
-├── traditional_models.py    # 训练并评估传统分类器
-├── train.py                 # CNN 模型训练脚本（可选 CPU / GPU）
-├── test.py                  # CNN 测试与评估脚本
-├── data/                    # MNIST 数据集下载路径
-├── output/                  # CNN 模型输出结果路径（支持命名子目录）
-│   ├── cnn_lr0.001_ep20_GPU/
-│   └── ...
-└── traditional_models/      # 存放传统分类器图像与报告结果
+## 🛠 环境配置  
 
-## 环境依赖
+### 1. 创建 Conda 环境  
+```bash
+conda create -n digit_recog python=3.10
+conda activate digit_recog
+```
 
-- Python 3.8+
-- PyTorch >= 1.12
-- torchvision
-- numpy
-- scikit-learn
-- matplotlib
+### 2. 安装依赖  
+```bash
+pip install -r requirements.txt
+```
 
-安装推荐：
+---
 
-pip install torch torchvision numpy scikit-learn matplotlib
+## 📁 项目结构  
+```
+Machine_Learning_Course_Design/
+├── data/                     # MNIST 数据（自动下载）
+├── models/                  # 模型结构定义
+│   └── cnn.py              # CNN 模型结构定义
+├── output/                  # CNN 各实验输出（按学习率/轮数/GPU分类）
+│   └── cnn_lr{lr}_ep{ep}_{device}/
+│       ├── cnn.pth
+│       ├── CNN训练验证损失曲线.png
+│       └── test/
+│           ├── 混淆矩阵热力图.png
+│           ├── ROC曲线.png
+│           └── 分类报告.txt
+├── traditional_models/      # 传统模型结果输出目录
+│   ├── 各模型图表/报告
+├── train.py                 # CNN训练主脚本（可设置学习率、轮数、GPU、优化器）
+├── test.py                  # CNN测试脚本（从模型路径中自动推断）
+├── traditional_models.py    # 传统机器学习模型训练与评估
+└── requirements.txt
+```
 
-## 运行方法
+---
 
-1. 训练 CNN 模型
+## 🚀 使用方法  
 
+### 1. 训练 CNN 模型  
+```bash
 python train.py
+```
 
-可配置项：
-- 是否使用 GPU：修改 USE_GPU = True / False
-- 学习率、轮次、输出目录：在 train.py 内部配置
+**功能说明**：  
+- 支持选择是否使用 GPU（USE_GPU）、自定义学习率、轮次、优化器
+- 自动保存模型、损失图、训练时间到指定目录  
 
-2. 测试 CNN 模型
+**输出目录示例**：  
+```
+output/cnn_lr0.001_ep20_GPU/
+├── cnn.pth
+├── CNN训练验证损失曲线.png
+└── test/
+    ├── 混淆矩阵热力图.png
+    ├── ROC曲线.png
+    └── 分类报告.txt
+```
 
+### 2. 测试 CNN 模型  
+```bash
 python test.py
+```
+- 自动加载指定目录的模型文件进行评估  
+- 输出指标：准确率、精确率、召回率、F1值、Kappa 系数、混淆矩阵、ROC 曲线
 
-测试文件将自动从 output/<子目录>/cnn.pth 加载模型并输出测试报告与图像，结果保存在该目录下的 test/ 子目录中。
-
-3. 传统分类器训练与评估
-
+### 3. 训练并评估传统分类模型  
+```bash
 python traditional_models.py
-
-支持训练以下模型并保存：
-- 逻辑回归（Logistic Regression）
-- 决策树（Decision Tree）
-- 支持向量机（SVM）
-- K 近邻（KNN）
-- 随机森林（Random Forest）
+```
+**包含模型**：  
+- 逻辑回归（LogisticRegression）
+- 决策树（DecisionTree）
+- 线性SVM（LinearSVC，采样10000条数据）
+- K近邻（KNN）
+- 随机森林（RandomForest）
 - 朴素贝叶斯（Naive Bayes）
 
-自动输出图像：
-- 各模型的混淆矩阵
-- ROC 曲线、PR 曲线、伪 F1 曲线
-- 综合雷达图、性能条形图、训练时长图
-- 分类报告汇总表
+**输出内容**：  
+- 混淆矩阵图、ROC、PR、F1伪曲线
+- 模型训练时长对比图
+- 模型性能条形图和雷达图
+- 分类报告（文本）
 
-## 示例结果展示
+---
 
-CNN（GPU，lr=0.001，20轮）准确率高达 99.05%，而表现最好的传统分类器为随机森林，准确率达 96.5%。
+## 🧠 模型与算法说明
 
-| 模型         | 准确率   | 训练时长（秒） |
-|--------------|----------|----------------|
-| CNN (GPU)    | 99.05%   | 143.17         |
-| CNN (CPU)    | 99.05%   | 413.61         |
-| Logistic     | 92.16%   | 7.83           |
-| DecisionTree | 88.31%   | 10.04          |
-| LinearSVM    | 86.71%   | 477.81         |
-| KNN          | 94.52%   | 0.11           |
-| RandomForest | 96.50%   | 29.74          |
-| NaiveBayes   | 52.40%   | 0.48           |
+### CNN 模型结构（models/cnn.py）
+- 两层卷积 + ReLU + 最大池化：
+  - Conv1: 输入通道1 → 输出通道32，卷积核3x3，padding=1
+  - Conv2: 32通道 → 64通道，卷积核3x3，padding=1
+- 最大池化：kernel_size=2, stride=2
+- 全连接层：
+  - Flatten → Linear(64×7×7 → 128) → ReLU
+  - Linear(128 → 10)，输出为10类
+- 最后使用 Softmax（通过 `CrossEntropyLoss` 内部实现）
 
-## 实验结论
+**训练参数配置**：
+- Optimizer：支持 `Adam`, `SGD(momentum=0.9)`, `RMSprop`
+- Loss Function：`CrossEntropyLoss`
+- Learning rate：可调，默认 `0.001`
+- Epochs：默认 `20`，支持动态设置
+- Batch size：64
+- 数据归一化：`mean=0.1307`, `std=0.3081`
+- 输出模型与图像文件路径自动命名，如：
+  - `output/cnn_Adam_lr0.001_ep20_GPU/cnn.pth`
 
-- CNN 表现明显优于传统分类器，尤其在 recall 和精度上更稳定；
-- 随机森林和 KNN 在传统方法中具有较好性能；
-- GPU 显著加速了 CNN 的训练，尤其在多轮训练中时间优势明显；
-- 不同学习率与训练轮次对模型表现影响明显，需综合考虑训练成本与性能；
-- 本系统具有良好的可拓展性和可视化分析能力。
+---
 
+### 传统模型参数设置（见 traditional_models.py）
+
+| 模型       | 参数说明                                |
+|------------|-----------------------------------------|
+| 逻辑回归   | `LogisticRegression(max_iter=1000)`     |
+| 决策树     | `DecisionTreeClassifier(max_depth=15)`  |
+| 线性SVM    | `LinearSVC(max_iter=3000)`（10k样本）   |
+| K近邻      | `KNeighborsClassifier(n_neighbors=3)`   |
+| 随机森林   | `RandomForestClassifier(n_estimators=100, max_depth=15)` |
+| 朴素贝叶斯 | `GaussianNB()`（默认参数）              |
+
+说明：
+- 所有模型使用 MNIST 展平数据（784维）
+- 所有输入先进行标准化 `StandardScaler()`
+- 线性SVM 为节省时间，仅用训练集前10000个样本
+
+
+## 📊 输出图示与指标  
+
+- 准确率（Accuracy）  
+- 精确率（Precision）  
+- 召回率（Recall）  
+- F1 值（F1-score）  
+- Kappa 系数  
+- AUC 指标（多类 ROC）  
+
+**输出图**：
+- CNN 损失曲线图
+- 各模型混淆矩阵热力图
+- 各模型 ROC 曲线
+- 模型性能雷达图 / 条形图
+- 分类报告文本
+
+---
+
+## 📝 实验总结与结论  
+
+- CNN 模型在 GPU 下训练速度远快于 CPU（约提升 3 倍）
+- 学习率设置对模型性能有显著影响，0.001~0.0005 较优
+- Adam 收敛速度快，SGD 更稳定，RMSprop 折中
+- 在 MNIST 上 CNN 可达 99.05% 精度，显著优于传统模型（最高约 96.5%）
+- 传统分类器在资源受限设备上仍具部署价值
+
+---
+
+## ❗注意事项  
+1. 初次运行将自动下载 MNIST 数据集  
+2. SVM 训练慢，代码已内置样本数限制优化  
+3. 所有输出会按结构保存，便于批量实验对比分析  
+4. 图像保存路径包含参数名（如学习率、轮次等）
+
+---
+
+## 📌 推荐实验流程  
+```bash
+# 训练 CNN 模型
+python train.py
+
+# 测试 CNN 模型
+python test.py
+
+# 训练传统模型并生成图表
+python traditional_models.py
+```
+
+---
 ## 参考文献
 
 1. LeCun et al. (1998). Gradient-based learning applied to document recognition. Proceedings of the IEEE.

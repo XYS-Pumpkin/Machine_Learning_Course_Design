@@ -15,14 +15,15 @@ rcParams['font.sans-serif'] = ['SimHei']
 rcParams['axes.unicode_minus'] = False
 
 # ===== 实验参数配置 =====
-USE_GPU = True         # 是否使用GPU
+USE_GPU = True          # 是否使用GPU
 learning_rate = 0.001   # 学习率
-epochs = 30             # 训练轮次
+epochs = 20             # 训练轮次
+optimizer_name = "Adam" # 可选："Adam", "SGD", "RMSprop"
 
 # ===== 设备设置 =====
 if not USE_GPU:
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-torch.cuda.is_available()  # 强制刷新设备状态
+torch.cuda.is_available()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("当前使用的设备是:", device)
 try:
@@ -47,12 +48,22 @@ val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)
 
 # ===== 输出目录设置 =====
 device_name = "GPU" if USE_GPU else "CPU"
-output_dir = f"output/cnn_lr{learning_rate}_ep{epochs}_{device_name}"
+output_dir = f"output/cnn_{optimizer_name}_lr{learning_rate}_ep{epochs}_{device_name}"
 os.makedirs(output_dir, exist_ok=True)
 
 # ===== 模型初始化与训练准备 =====
 model = CNN().to(device)
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# 选择优化器
+if optimizer_name == "Adam":
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+elif optimizer_name == "SGD":
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+elif optimizer_name == "RMSprop":
+    optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+else:
+    raise ValueError("不支持的优化器类型，请选择 'Adam', 'SGD' 或 'RMSprop'")
+
 criterion = nn.CrossEntropyLoss()
 
 train_loss_list = []
@@ -100,7 +111,7 @@ plt.plot(range(1, epochs + 1), train_loss_list, marker='o', label='训练损失'
 plt.plot(range(1, epochs + 1), val_loss_list, marker='s', label='验证损失')
 plt.xlabel("轮次（Epoch）")
 plt.ylabel("损失（Loss）")
-plt.title(f"CNN训练与验证损失曲线（lr={learning_rate}, ep={epochs}, {device_name}）")
+plt.title(f"CNN训练与验证损失曲线（{optimizer_name}, lr={learning_rate}, ep={epochs}, {device_name}）")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()

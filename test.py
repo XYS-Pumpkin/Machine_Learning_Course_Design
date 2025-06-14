@@ -20,7 +20,7 @@ rcParams['font.sans-serif'] = ['SimHei']
 rcParams['axes.unicode_minus'] = False
 
 # ====== 路径设置 ======
-model_dir = "output/cnn_lr0.001_ep30_GPU"  # 可修改这行为任何模型目录
+model_dir = "output/cnn_RMSprop_lr0.001_ep20_GPU"  # 可修改这行为任何模型目录
 model_path = os.path.join(model_dir, "cnn.pth")
 test_output_dir = os.path.join(model_dir, "test")
 os.makedirs(test_output_dir, exist_ok=True)
