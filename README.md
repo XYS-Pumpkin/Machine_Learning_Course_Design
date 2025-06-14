@@ -7,16 +7,16 @@
 
 ## 🛠 环境配置  
 
-### 1. 创建 Conda 环境  
-```bash
-conda create -n digit_recog python=3.10
-conda activate digit_recog
-```
+### 1. 创建 Python 虚拟环境
 
-### 2. 安装依赖  
 ```bash
+# 创建名为 .MLCD 的虚拟环境
+# 如果使用 venv：
+python3.12 -m venv .MLCD
+.MLCD\Scripts\activate      # Windows
+
+# 安装依赖（基于 pip）
 pip install -r requirements.txt
-```
 
 ---
 
