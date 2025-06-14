@@ -24,23 +24,33 @@ pip install -r requirements.txt
 ## 📁 项目结构  
 ```
 Machine_Learning_Course_Design/
-├── data/                     # MNIST 数据（自动下载）
-├── models/                  # 模型结构定义
-│   └── cnn.py              # CNN 模型结构定义
-├── output/                  # CNN 各实验输出（按学习率/轮数/GPU分类）
-│   └── cnn_lr{lr}_ep{ep}_{device}/
-│       ├── cnn.pth
+├── data/                        # MNIST 数据集（首次运行自动下载）
+│
+├── models/                      # 模型结构文件
+│   └── cnn.py                   # CNN 网络定义
+│
+├── output/                      # CNN 实验结果输出目录（按实验自动创建）
+│   └── cnn_{优化器}_lr{lr}_ep{ep}_{GPU/CPU}/
+│       ├── cnn.pth              # 保存的模型参数
 │       ├── CNN训练验证损失曲线.png
-│       └── test/
+│       └── test/                # 测试阶段结果
 │           ├── 混淆矩阵热力图.png
 │           ├── ROC曲线.png
 │           └── 分类报告.txt
-├── traditional_models/      # 传统模型结果输出目录
-│   ├── 各模型图表/报告
-├── train.py                 # CNN训练主脚本（可设置学习率、轮数、GPU、优化器）
-├── test.py                  # CNN测试脚本（从模型路径中自动推断）
-├── traditional_models.py    # 传统机器学习模型训练与评估
-└── requirements.txt
+│
+├── traditional_models/          # 传统模型结果输出
+│   ├── 模型性能条形图.png
+│   ├── 模型雷达图.png
+│   ├── 模型训练时长条形图.png
+│   ├── 各模型的ROC、PR曲线、混淆矩阵等图表
+│   └── 分类报告.txt
+│
+├── train.py                     # CNN训练脚本（支持自定义参数）
+├── test.py                      # CNN模型测试脚本（自动识别输出目录）
+├── traditional_models.py        # 各传统分类器训练与评估脚本
+├── requirements.txt             # 项目依赖包
+└── README.md                    # 项目说明文件
+
 ```
 
 ---
