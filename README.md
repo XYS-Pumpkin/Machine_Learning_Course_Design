@@ -17,6 +17,7 @@ python3.12 -m venv .MLCD
 
 # 安装依赖（基于 pip）
 pip install -r requirements.txt
+```
 
 ---
 
